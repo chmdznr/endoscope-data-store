@@ -24,6 +24,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Users
     Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::resource('users', 'UsersController');
+
+    // Vision Data
+    Route::delete('vision-datas/destroy', 'VisionDataController@massDestroy')->name('vision-datas.massDestroy');
+    Route::post('vision-datas/media', 'VisionDataController@storeMedia')->name('vision-datas.storeMedia');
+    Route::post('vision-datas/ckmedia', 'VisionDataController@storeCKEditorImages')->name('vision-datas.storeCKEditorImages');
+    Route::resource('vision-datas', 'VisionDataController');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

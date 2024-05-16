@@ -76,6 +76,26 @@ class PermissionsTableSeeder extends Seeder
             ],
             [
                 'id'    => 17,
+                'title' => 'vision_data_create',
+            ],
+            [
+                'id'    => 18,
+                'title' => 'vision_data_edit',
+            ],
+            [
+                'id'    => 19,
+                'title' => 'vision_data_show',
+            ],
+            [
+                'id'    => 20,
+                'title' => 'vision_data_delete',
+            ],
+            [
+                'id'    => 21,
+                'title' => 'vision_data_access',
+            ],
+            [
+                'id'    => 22,
                 'title' => 'profile_password_edit',
             ],
         ];
