@@ -12,18 +12,76 @@ use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
+use Yajra\DataTables\Facades\DataTables;
 
 class VisionDataController extends Controller
 {
     use MediaUploadingTrait;
 
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('vision_data_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $visionDatas = VisionData::with(['media'])->get();
+        if ($request->ajax()) {
+            $query = VisionData::query()->select(sprintf('%s.*', (new VisionData)->table));
+            $table = Datatables::of($query);
 
-        return view('admin.visionDatas.index', compact('visionDatas'));
+            $table->addColumn('placeholder', '&nbsp;');
+            $table->addColumn('actions', '&nbsp;');
+
+            $table->editColumn('actions', function ($row) {
+                $viewGate      = 'vision_data_show';
+                $editGate      = 'vision_data_edit';
+                $deleteGate    = 'vision_data_delete';
+                $crudRoutePart = 'vision-datas';
+
+                return view('partials.datatablesActions', compact(
+                    'viewGate',
+                    'editGate',
+                    'deleteGate',
+                    'crudRoutePart',
+                    'row'
+                ));
+            });
+
+            $table->editColumn('id', function ($row) {
+                return $row->id ? $row->id : '';
+            });
+            $table->editColumn('trial_code', function ($row) {
+                return $row->trial_code ? $row->trial_code : '';
+            });
+            $table->editColumn('name', function ($row) {
+                return $row->name ? $row->name : '';
+            });
+            $table->editColumn('gravidity', function ($row) {
+                return $row->gravidity ? $row->gravidity : '';
+            });
+            $table->editColumn('parity', function ($row) {
+                return $row->parity ? $row->parity : '';
+            });
+            $table->editColumn('age', function ($row) {
+                return $row->age ? $row->age : '';
+            });
+            $table->editColumn('trial_type', function ($row) {
+                return $row->trial_type ? VisionData::TRIAL_TYPE_SELECT[$row->trial_type] : '';
+            });
+
+            $table->editColumn('file_type', function ($row) {
+                return $row->file_type ? VisionData::FILE_TYPE_SELECT[$row->file_type] : '';
+            });
+            $table->editColumn('file', function ($row) {
+                return $row->file ? '<a href="' . $row->file->getUrl() . '" target="_blank">' . trans('global.downloadFile') . '</a>' : '';
+            });
+            $table->editColumn('notes', function ($row) {
+                return $row->notes ? $row->notes : '';
+            });
+
+            $table->rawColumns(['actions', 'placeholder', 'file']);
+
+            return $table->make(true);
+        }
+
+        return view('admin.visionDatas.index');
     }
 
     public function create()
